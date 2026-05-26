@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Magical Journal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="stars" aria-hidden="true"></div>
+
+  <header class="main-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-sigil">✦</span>
+        <span class="logo-text">The Magical Journal</span>
+      </div>
+      <nav class="main-nav" role="navigation">
+        <button class="nav-btn active" data-view="dashboard">Sanctum</button>
+        <button class="nav-btn" data-view="new-entry">Record</button>
+        <button class="nav-btn" data-view="records">Annals</button>
+        <button class="nav-btn" data-view="profile">Adept</button>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
+    </div>
+  </header>
+
+  <main id="app" role="main"></main>
+
+  <div id="modal-overlay" class="modal-overlay" aria-hidden="true">
+    <div class="modal" id="modal" role="dialog" aria-modal="true">
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
