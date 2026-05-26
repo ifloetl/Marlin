@@ -6,7 +6,824 @@
   <title>The Magical Journal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <style>
+/* ═══════════════════════════════════════════════════════════════
+   ROOT VARIABLES
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --bg: #07070f;
+  --bg-mid: #0e0e1c;
+  --bg-card: rgba(18, 14, 38, 0.88);
+  --bg-card-hover: rgba(28, 20, 55, 0.92);
+  --bg-input: rgba(10, 8, 25, 0.8);
+  --border: rgba(160, 120, 40, 0.22);
+  --border-bright: rgba(200, 165, 70, 0.55);
+  --gold: #c9a84c;
+  --gold-light: #e5c97a;
+  --gold-dim: #7a6030;
+  --silver: #a8b0c0;
+  --silver-dim: #666880;
+  --text: #d8d0ea;
+  --text-muted: #7870a0;
+  --text-faint: #4a4565;
+  --purple: #8860e0;
+  --purple-dark: #3a1a70;
+  --teal: #40b0b8;
+  --crimson: #c04060;
+  --green: #50b880;
+  --font-display: 'Cinzel', 'Palatino Linotype', Georgia, serif;
+  --font-body: 'Crimson Text', Georgia, 'Times New Roman', serif;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.6);
+  --glow-gold: 0 0 16px rgba(200, 165, 70, 0.35);
+  --glow-purple: 0 0 20px rgba(136, 96, 224, 0.35);
+  --transition: 0.25s ease;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+input, textarea, select {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+  width: 100%;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--gold-dim);
+  box-shadow: 0 0 0 2px rgba(200, 168, 76, 0.18);
+}
+textarea { resize: vertical; min-height: 120px; }
+select option { background: #1a1030; }
+a { color: var(--gold); text-decoration: none; }
+a:hover { color: var(--gold-light); }
+
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.04em; }
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.15rem; }
+
+/* ═══════════════════════════════════════════════════════════════
+   STAR BACKGROUND
+   ═══════════════════════════════════════════════════════════════ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 25% 15%, rgba(40, 10, 80, 0.6) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 85%, rgba(10, 30, 70, 0.5) 0%, transparent 55%),
+    linear-gradient(180deg, #09090f 0%, #07070d 100%);
+  z-index: -2;
+  pointer-events: none;
+}
+
+#stars {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  animation: twinkle linear infinite alternate;
+}
+@keyframes twinkle {
+  from { opacity: 0.15; transform: scale(0.8); }
+  to   { opacity: 0.9;  transform: scale(1.2); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HEADER & NAV
+   ═══════════════════════════════════════════════════════════════ */
+.main-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(7, 7, 15, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+.logo-sigil {
+  font-size: 1.4rem;
+  color: var(--gold);
+  filter: drop-shadow(0 0 8px rgba(200,168,76,0.7));
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(200,168,76,0.5)); }
+  50%       { filter: drop-shadow(0 0 14px rgba(200,168,76,0.9)); }
+}
+.logo-text {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--gold-light);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.main-nav { display: flex; gap: 0.25rem; margin-left: auto; }
+.nav-btn {
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  color: var(--silver-dim);
+  transition: color var(--transition), background var(--transition);
+}
+.nav-btn:hover { color: var(--gold-light); background: rgba(200,168,76,0.08); }
+.nav-btn.active {
+  color: var(--gold);
+  background: rgba(200,168,76,0.14);
+  box-shadow: 0 0 12px rgba(200,168,76,0.2);
+}
+.nav-toggle {
+  display: none;
+  font-size: 1.3rem;
+  color: var(--silver);
+  margin-left: auto;
+}
+@media (max-width: 600px) {
+  .main-nav { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; right: 0; background: rgba(7,7,15,0.97); padding: 1rem; border-bottom: 1px solid var(--border); z-index: 200; }
+  .main-nav.open { display: flex; }
+  .nav-toggle { display: block; }
+  .logo-text { font-size: 0.9rem; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MAIN CONTENT
+   ═══════════════════════════════════════════════════════════════ */
+#app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  animation: fade-in 0.4s ease;
+}
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CARDS
+   ═══════════════════════════════════════════════════════════════ */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.card:hover { border-color: var(--border-bright); box-shadow: var(--glow-gold); }
+.card-title {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 1rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DASHBOARD
+   ═══════════════════════════════════════════════════════════════ */
+.dashboard-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.dashboard-header h1 { color: var(--gold-light); margin-bottom: 0.25rem; }
+.dashboard-header .greeting { color: var(--text-muted); font-style: italic; font-size: 1.1rem; }
+
+.cosmic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.cosmic-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.2rem;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.cosmic-item:hover { border-color: var(--border-bright); box-shadow: var(--glow-purple); }
+.cosmic-symbol {
+  font-size: 2.2rem;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+  display: block;
+}
+.cosmic-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  font-family: var(--font-display);
+}
+.cosmic-value {
+  font-size: 0.95rem;
+  color: var(--gold-light);
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+.cosmic-sub {
+  font-size: 0.82rem;
+  color: var(--silver-dim);
+  font-style: italic;
+}
+
+.grade-banner {
+  background: linear-gradient(135deg, rgba(40, 10, 80, 0.7), rgba(20, 10, 50, 0.7));
+  border: 1px solid rgba(136, 96, 224, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 0 20px rgba(136, 96, 224, 0.15);
+}
+.grade-banner .grade-icon { font-size: 1.8rem; }
+.grade-banner .grade-info h3 { color: var(--purple); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.15rem; }
+.grade-banner .grade-info span { color: var(--gold-light); font-family: var(--font-display); font-size: 1.05rem; }
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.entries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+.entry-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.2rem;
+  cursor: pointer;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.entry-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--type-color, var(--gold-dim));
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+}
+.entry-card:hover {
+  border-color: var(--border-bright);
+  box-shadow: var(--glow-gold);
+  transform: translateY(-2px);
+}
+.entry-type-badge {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: var(--font-display);
+  color: var(--type-color, var(--gold-dim));
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.entry-card h3 {
+  font-size: 1rem;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+  line-height: 1.3;
+}
+.entry-card .entry-date {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+.entry-card .entry-preview {
+  font-size: 0.9rem;
+  color: var(--silver-dim);
+  margin-top: 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.entry-card .entry-footer {
+  margin-top: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.tag {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  background: rgba(200,168,76,0.1);
+  border: 1px solid rgba(200,168,76,0.2);
+  color: var(--gold-dim);
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+}
+.moon-mini { font-size: 0.85rem; color: var(--silver-dim); margin-left: auto; }
+.stars-display { color: var(--gold); font-size: 0.85rem; letter-spacing: -0.1em; }
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+}
+.empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+.empty-state p { font-style: italic; }
+
+.quick-record {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+.btn-primary {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  padding: 0.7rem 2rem;
+  background: linear-gradient(135deg, rgba(200,168,76,0.2), rgba(200,168,76,0.1));
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--radius);
+  color: var(--gold-light);
+  transition: all var(--transition);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, rgba(200,168,76,0.35), rgba(200,168,76,0.2));
+  box-shadow: var(--glow-gold);
+  transform: translateY(-1px);
+}
+.btn-secondary {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  padding: 0.5rem 1.2rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--silver-dim);
+  transition: all var(--transition);
+}
+.btn-secondary:hover { border-color: var(--border-bright); color: var(--silver); }
+.btn-danger {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  padding: 0.5rem 1.2rem;
+  background: transparent;
+  border: 1px solid rgba(192, 64, 96, 0.4);
+  border-radius: var(--radius);
+  color: var(--crimson);
+  transition: all var(--transition);
+}
+.btn-danger:hover { background: rgba(192,64,96,0.12); border-color: var(--crimson); }
+
+/* ═══════════════════════════════════════════════════════════════
+   NEW ENTRY FORM
+   ═══════════════════════════════════════════════════════════════ */
+.new-entry-header { margin-bottom: 1.5rem; }
+.new-entry-header h1 { color: var(--gold-light); }
+.new-entry-header p { color: var(--text-muted); font-style: italic; }
+
+.type-selector {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.type-btn {
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.type-btn:hover { border-color: var(--border-bright); color: var(--text); }
+.type-btn.active {
+  border-color: var(--type-color, var(--gold-dim));
+  color: var(--type-color, var(--gold-light));
+  background: rgba(0,0,0,0.3);
+  box-shadow: 0 0 12px rgba(0,0,0,0.3);
+}
+
+.entry-form { display: grid; gap: 1.5rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 640px) { .form-row { grid-template-columns: 1fr; } }
+
+.form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+.form-group label {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+}
+
+.astro-bar {
+  background: linear-gradient(135deg, rgba(30, 20, 60, 0.7), rgba(20, 10, 40, 0.7));
+  border: 1px solid rgba(136, 96, 224, 0.25);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.2rem;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.astro-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.88rem; }
+.astro-item .sym { font-size: 1.1rem; }
+.astro-item .lbl { color: var(--text-muted); font-size: 0.78rem; }
+.astro-item .val { color: var(--gold-light); font-family: var(--font-display); font-size: 0.82rem; }
+
+.star-rating {
+  display: flex;
+  gap: 0.25rem;
+}
+.star-btn {
+  font-size: 1.3rem;
+  color: var(--border);
+  transition: color var(--transition), transform var(--transition);
+  line-height: 1;
+}
+.star-btn:hover, .star-btn.active { color: var(--gold); transform: scale(1.15); }
+
+.tags-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  min-height: 36px;
+  padding: 0.4rem 0.75rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: text;
+  transition: border-color var(--transition);
+  align-items: center;
+}
+.tags-display:focus-within { border-color: var(--gold-dim); }
+.tag-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.1rem 0.5rem;
+  background: rgba(200,168,76,0.12);
+  border: 1px solid rgba(200,168,76,0.25);
+  border-radius: 20px;
+  color: var(--gold);
+  font-size: 0.8rem;
+}
+.tag-remove { cursor: pointer; color: var(--gold-dim); font-size: 0.75rem; line-height: 1; }
+.tag-remove:hover { color: var(--crimson); }
+.tag-input-real {
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.9rem;
+  padding: 0;
+  flex: 1;
+  min-width: 80px;
+  outline: none;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0.5rem 0;
+}
+
+.type-fields { display: grid; gap: 1.2rem; }
+.form-actions { display: flex; gap: 0.75rem; justify-content: flex-end; padding-top: 0.5rem; }
+
+/* ═══════════════════════════════════════════════════════════════
+   RECORDS
+   ═══════════════════════════════════════════════════════════════ */
+.records-header { margin-bottom: 1.5rem; }
+.records-header h1 { color: var(--gold-light); }
+
+.filter-bar {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+.search-box input { padding-left: 2.2rem; }
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-faint);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+.filter-tabs {
+  display: flex;
+  gap: 0.25rem;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.25rem;
+}
+.filter-tab {
+  padding: 0.3rem 0.75rem;
+  border-radius: calc(var(--radius) - 2px);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  transition: all var(--transition);
+}
+.filter-tab:hover { color: var(--text); }
+.filter-tab.active { background: rgba(200,168,76,0.15); color: var(--gold-light); }
+
+.records-list { display: grid; gap: 0.75rem; }
+.record-row {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.2rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.record-row::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--type-color, var(--gold-dim));
+}
+.record-row:hover { border-color: var(--border-bright); transform: translateX(3px); }
+.record-icon { font-size: 1.5rem; width: 36px; text-align: center; }
+.record-main h3 { font-size: 1rem; color: var(--text); margin-bottom: 0.15rem; }
+.record-meta { font-size: 0.82rem; color: var(--text-muted); }
+.record-aside { text-align: right; flex-shrink: 0; }
+.record-date { font-size: 0.8rem; color: var(--text-faint); font-family: var(--font-display); white-space: nowrap; }
+.record-moon { font-size: 0.85rem; color: var(--silver-dim); }
+
+/* ═══════════════════════════════════════════════════════════════
+   ENTRY DETAIL
+   ═══════════════════════════════════════════════════════════════ */
+.detail-header { margin-bottom: 2rem; }
+.detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  transition: color var(--transition);
+}
+.detail-back:hover { color: var(--gold); }
+.detail-type { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+.detail-type-badge {
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-family: var(--font-display);
+  color: var(--type-color, var(--gold));
+  border: 1px solid var(--type-color, var(--gold-dim));
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+}
+.detail-header h1 { color: var(--gold-light); font-size: 1.8rem; margin-bottom: 0.4rem; }
+.detail-date { color: var(--text-muted); font-style: italic; font-size: 1rem; }
+
+.detail-astro {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  background: linear-gradient(135deg, rgba(30,20,60,0.6), rgba(15,10,35,0.6));
+  border: 1px solid rgba(136, 96, 224, 0.2);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.5rem;
+}
+.detail-astro-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.88rem; }
+.detail-astro-item .sym { font-size: 1.1rem; }
+.detail-astro-item span:last-child { color: var(--gold-light); font-family: var(--font-display); font-size: 0.82rem; }
+
+.detail-body { display: grid; gap: 1.5rem; }
+.detail-section h3 {
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+.detail-section p, .detail-section .detail-content {
+  color: var(--text);
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+.detail-rating { font-size: 1.2rem; color: var(--gold); letter-spacing: -0.1em; }
+.detail-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+.detail-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROFILE
+   ═══════════════════════════════════════════════════════════════ */
+.profile-header { margin-bottom: 2rem; }
+.profile-header h1 { color: var(--gold-light); }
+.profile-header p { color: var(--text-muted); font-style: italic; }
+
+.profile-form { display: grid; gap: 1.5rem; max-width: 520px; }
+
+.grade-display {
+  background: linear-gradient(135deg, rgba(40,10,80,0.6), rgba(20,8,50,0.6));
+  border: 1px solid rgba(136,96,224,0.35);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: var(--glow-purple);
+  margin-bottom: 1.5rem;
+}
+.grade-display .grade-sigil { font-size: 3rem; margin-bottom: 0.5rem; }
+.grade-display .grade-name { font-family: var(--font-display); font-size: 1.2rem; color: var(--gold-light); }
+.grade-display .grade-order { font-size: 0.82rem; color: var(--purple); letter-spacing: 0.1em; }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.2rem;
+  text-align: center;
+}
+.stat-number { font-family: var(--font-display); font-size: 2rem; color: var(--gold-light); }
+.stat-label { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; font-family: var(--font-display); }
+
+/* ═══════════════════════════════════════════════════════════════
+   MODAL
+   ═══════════════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--bg-mid);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 16px 60px rgba(0,0,0,0.8), var(--glow-gold);
+  transform: scale(0.96);
+  transition: transform var(--transition);
+}
+.modal-overlay.open .modal { transform: scale(1); }
+.modal h2 { color: var(--gold-light); margin-bottom: 0.75rem; }
+.modal p { color: var(--text-muted); margin-bottom: 1.5rem; }
+.modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+
+/* ═══════════════════════════════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius);
+  padding: 0.75rem 1.25rem;
+  color: var(--text);
+  font-size: 0.9rem;
+  box-shadow: var(--shadow), var(--glow-gold);
+  z-index: 2000;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════════════════════════════════════════════════
+   ENTRY TYPE COLOR TOKENS
+   ═══════════════════════════════════════════════════════════════ */
+.type-ritual     { --type-color: #c9a84c; }
+.type-dream      { --type-color: #8860e0; }
+.type-study      { --type-color: #40b0b8; }
+.type-divination { --type-color: #c04060; }
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+.text-gold { color: var(--gold-light); }
+.text-muted { color: var(--text-muted); }
+.text-center { text-align: center; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.flex { display: flex; }
+.gap-1 { gap: 0.5rem; }
+.align-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.hidden { display: none !important; }
+  </style>
 </head>
 <body>
   <div id="stars" aria-hidden="true"></div>
@@ -37,6 +854,1056 @@
 
   <div id="toast" class="toast" aria-live="polite"></div>
 
-  <script src="app.js"></script>
+  <script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// ASTRONOMY
+// ═══════════════════════════════════════════════════════════════
+const Astro = (() => {
+  const REF = new Date('2000-01-06T18:14:00Z');
+  const SYNODIC = 29.53058867;
+
+  const MOON_PHASES = [
+    { name: 'New Moon',        symbol: '🌑', max: 1.85  },
+    { name: 'Waxing Crescent', symbol: '🌒', max: 7.38  },
+    { name: 'First Quarter',   symbol: '🌓', max: 9.22  },
+    { name: 'Waxing Gibbous',  symbol: '🌔', max: 14.77 },
+    { name: 'Full Moon',       symbol: '🌕', max: 16.61 },
+    { name: 'Waning Gibbous',  symbol: '🌖', max: 22.15 },
+    { name: 'Last Quarter',    symbol: '🌗', max: 23.99 },
+    { name: 'Waning Crescent', symbol: '🌘', max: 29.53 },
+  ];
+
+  const ZODIAC = [
+    { name: 'Aries',       symbol: '♈' }, { name: 'Taurus',       symbol: '♉' },
+    { name: 'Gemini',      symbol: '♊' }, { name: 'Cancer',       symbol: '♋' },
+    { name: 'Leo',         symbol: '♌' }, { name: 'Virgo',        symbol: '♍' },
+    { name: 'Libra',       symbol: '♎' }, { name: 'Scorpio',      symbol: '♏' },
+    { name: 'Sagittarius', symbol: '♐' }, { name: 'Capricorn',    symbol: '♑' },
+    { name: 'Aquarius',    symbol: '♒' }, { name: 'Pisces',       symbol: '♓' },
+  ];
+
+  // Chaldean order: Saturn, Jupiter, Mars, Sun, Venus, Mercury, Moon
+  const PLANETS = [
+    { name: 'Saturn',  symbol: '♄' },
+    { name: 'Jupiter', symbol: '♃' },
+    { name: 'Mars',    symbol: '♂' },
+    { name: 'Sun',     symbol: '☉' },
+    { name: 'Venus',   symbol: '♀' },
+    { name: 'Mercury', symbol: '☿' },
+    { name: 'Moon',    symbol: '☽' },
+  ];
+
+  // Day rulers indexed by JS getDay() (0=Sun … 6=Sat)
+  const DAY_RULER = [3, 6, 2, 5, 1, 4, 0]; // indices into PLANETS
+
+  function moonPhase(date) {
+    const days = (date - REF) / 86400000;
+    const pos  = ((days % SYNODIC) + SYNODIC) % SYNODIC;
+    return { ...MOON_PHASES.find(p => pos < p.max), pos };
+  }
+
+  function moonSign(date) {
+    const days = (date - REF) / 86400000;
+    // Moon at reference ~277° (7° Capricorn); moves 13.17638°/day
+    const lon  = ((277 + days * 13.17638) % 360 + 360) % 360;
+    return ZODIAC[Math.floor(lon / 30)];
+  }
+
+  function dayRuler(date) {
+    return PLANETS[DAY_RULER[date.getDay()]];
+  }
+
+  function planetaryHour(date) {
+    const rulerIdx = DAY_RULER[date.getDay()];
+    const mins = date.getHours() * 60 + date.getMinutes();
+    const RISE = 360, SET = 1080; // 6am, 6pm in minutes
+    const DAY_STEP   = (SET - RISE) / 12;       // 60 min per hour
+    const NIGHT_STEP = (1440 - (SET - RISE)) / 12; // 60 min per hour
+    let hourNum;
+    if (mins >= RISE && mins < SET) {
+      hourNum = Math.floor((mins - RISE) / DAY_STEP);
+    } else {
+      const nightMins = mins >= SET ? mins - SET : mins + (1440 - SET);
+      hourNum = 12 + Math.floor(nightMins / NIGHT_STEP);
+    }
+    return PLANETS[(rulerIdx + Math.min(hourNum, 23)) % 7];
+  }
+
+  function getAll(date = new Date()) {
+    return {
+      moonPhase:     moonPhase(date),
+      moonSign:      moonSign(date),
+      dayRuler:      dayRuler(date),
+      planetaryHour: planetaryHour(date),
+    };
+  }
+
+  return { getAll };
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════════════════════
+const DB = (() => {
+  const ENTRIES_KEY = 'mj_entries';
+  const PROFILE_KEY = 'mj_profile';
+
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  function getEntries() {
+    try { return JSON.parse(localStorage.getItem(ENTRIES_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function saveEntry(entry) {
+    const entries = getEntries();
+    const existing = entries.findIndex(e => e.id === entry.id);
+    const now = new Date().toISOString();
+    if (existing >= 0) {
+      entries[existing] = { ...entry, updatedAt: now };
+    } else {
+      entries.unshift({ ...entry, id: uid(), createdAt: now, updatedAt: now });
+    }
+    localStorage.setItem(ENTRIES_KEY, JSON.stringify(entries));
+    return entries[existing >= 0 ? existing : 0];
+  }
+
+  function deleteEntry(id) {
+    const entries = getEntries().filter(e => e.id !== id);
+    localStorage.setItem(ENTRIES_KEY, JSON.stringify(entries));
+  }
+
+  function getProfile() {
+    try { return JSON.parse(localStorage.getItem(PROFILE_KEY)) || {}; }
+    catch { return {}; }
+  }
+
+  function saveProfile(profile) {
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+  }
+
+  return { uid, getEntries, saveEntry, deleteEntry, getProfile, saveProfile };
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// CONSTANTS & HELPERS
+// ═══════════════════════════════════════════════════════════════
+const TYPE_META = {
+  ritual:     { label: 'Ritual',     icon: '🜏', color: '#c9a84c' },
+  dream:      { label: 'Dream',      icon: '☽',  color: '#8860e0' },
+  study:      { label: 'Study',      icon: '📜', color: '#40b0b8' },
+  divination: { label: 'Divination', icon: '✦',  color: '#c04060' },
+};
+
+const AA_GRADES = [
+  '⬡ Student', '0°=0□ Probationer', '1°=10□ Neophyte', '2°=9□ Zelator',
+  '3°=8□ Practicus', '4°=7□ Philosophus', '5°=6□ Adeptus Minor',
+  '6°=5□ Adeptus Major', '7°=4□ Adeptus Exemptus',
+  '8°=3□ Magister Templi', '9°=2□ Magus', '10°=1□ Ipsissimus',
+];
+
+const GD_GRADES = [
+  '0°=0□ Neophyte', '1°=10□ Zelator', '2°=9□ Theoricus', '3°=8□ Practicus',
+  '4°=7□ Philosophus', '5°=6□ Adeptus Minor', '6°=5□ Adeptus Major',
+  '7°=4□ Adeptus Exemptus', '8°=3□ Magister Templi', '9°=2□ Magus',
+  '10°=1□ Ipsissimus',
+];
+
+const GRADE_SIGILS = {
+  'Student': '△', 'Probationer': '○', 'Neophyte': '✦', 'Zelator': '🜃',
+  'Theoricus': '🜂', 'Practicus': '🜄', 'Philosophus': '🜁',
+  'Adeptus Minor': '⊕', 'Adeptus Major': '⊗', 'Adeptus Exemptus': '◎',
+  'Magister Templi': '▽', 'Magus': '∅', 'Ipsissimus': '☆',
+};
+
+function formatDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function formatShortDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso + (iso.length === 10 ? 'T12:00:00' : ''));
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function stars(n, max = 5) {
+  if (!n) return '';
+  return '★'.repeat(n) + '☆'.repeat(max - n);
+}
+
+function sanitize(str) {
+  const d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
+}
+
+function showToast(msg, duration = 2500) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => el.classList.remove('show'), duration);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TAG INPUT WIDGET
+// ═══════════════════════════════════════════════════════════════
+function TagInput(containerId, initial = []) {
+  let tags = [...initial];
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return { get: () => tags };
+
+  function render() {
+    wrap.innerHTML = tags.map((t, i) =>
+      `<span class="tag-item">${sanitize(t)}<span class="tag-remove" data-i="${i}">✕</span></span>`
+    ).join('') + `<input class="tag-input-real" placeholder="add tag, press Enter" id="${containerId}-real">`;
+
+    wrap.querySelector(`#${containerId}-real`).addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        const val = e.target.value.trim().replace(/,$/, '');
+        if (val && !tags.includes(val)) { tags.push(val); render(); }
+        else e.target.value = '';
+      } else if (e.key === 'Backspace' && e.target.value === '' && tags.length) {
+        tags.pop(); render();
+      }
+    });
+    wrap.querySelectorAll('.tag-remove').forEach(btn =>
+      btn.addEventListener('click', () => { tags.splice(+btn.dataset.i, 1); render(); })
+    );
+  }
+
+  wrap.addEventListener('click', () => {
+    const input = wrap.querySelector('.tag-input-real');
+    if (input) input.focus();
+  });
+
+  render();
+  return { get: () => tags };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STAR RATING WIDGET
+// ═══════════════════════════════════════════════════════════════
+function StarRating(containerId, initial = 0, max = 5) {
+  let value = initial;
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return { get: () => value };
+
+  function render() {
+    wrap.innerHTML = Array.from({ length: max }, (_, i) =>
+      `<button type="button" class="star-btn ${i < value ? 'active' : ''}" data-v="${i + 1}" title="${i + 1} star${i ? 's' : ''}">★</button>`
+    ).join('');
+    wrap.querySelectorAll('.star-btn').forEach(btn => {
+      btn.addEventListener('click', () => { value = +btn.dataset.v; render(); });
+      btn.addEventListener('mouseenter', () => {
+        wrap.querySelectorAll('.star-btn').forEach((b, j) =>
+          b.classList.toggle('active', j < +btn.dataset.v));
+      });
+    });
+    wrap.addEventListener('mouseleave', render);
+  }
+
+  render();
+  return { get: () => value };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// APP STATE & ROUTER
+// ═══════════════════════════════════════════════════════════════
+const App = {
+  view: 'dashboard',
+  params: {},
+  editingEntry: null,
+  activeType: 'ritual',
+  tagInput: null,
+  ratingWidgets: {},
+
+  navigate(view, params = {}) {
+    this.view = view;
+    this.params = params;
+    this.render();
+    document.querySelectorAll('.nav-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.view === view || (view === 'entry-detail' && b.dataset.view === 'records'))
+    );
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  render() {
+    const app = document.getElementById('app');
+    app.style.animation = 'none';
+    app.offsetHeight; // reflow
+    app.style.animation = '';
+    switch (this.view) {
+      case 'dashboard':    app.innerHTML = this.viewDashboard(); break;
+      case 'new-entry':    app.innerHTML = this.viewNewEntry(); break;
+      case 'records':      app.innerHTML = this.viewRecords(); break;
+      case 'profile':      app.innerHTML = this.viewProfile(); break;
+      case 'entry-detail': app.innerHTML = this.viewDetail(this.params.id); break;
+    }
+    this.bindEvents();
+  },
+
+  // ──────────────────────────────────────────────────────────────
+  // DASHBOARD VIEW
+  // ──────────────────────────────────────────────────────────────
+  viewDashboard() {
+    const astro   = Astro.getAll();
+    const profile = DB.getProfile();
+    const entries = DB.getEntries();
+    const recent  = entries.slice(0, 6);
+
+    const greetings = [
+      'May your workings bear fruit.',
+      'The stars are aligned for your practice.',
+      'What Will shall be accomplished today?',
+      'The Great Work continues.',
+      'All acts of love and will are your rituals.',
+    ];
+    const greeting = greetings[new Date().getDay() % greetings.length];
+
+    const gradeLine = profile.grade
+      ? `<div class="grade-banner">
+          <span class="grade-icon">${GRADE_SIGILS[profile.grade.replace(/.*?\s/, '')] || '✦'}</span>
+          <div class="grade-info">
+            <h3>${profile.order === 'aa' ? 'A∴A∴' : profile.order === 'golden_dawn' ? 'Golden Dawn' : profile.order || 'Order'}</h3>
+            <span>${sanitize(profile.grade)}</span>
+          </div>
+        </div>` : '';
+
+    const entriesHtml = recent.length
+      ? recent.map(e => this.entryCard(e)).join('')
+      : `<div class="empty-state">
+          <div class="empty-icon">📖</div>
+          <p>Your annals await the first inscription.<br>Begin your record below.</p>
+        </div>`;
+
+    return `
+      <div class="dashboard-header">
+        <h1>${sanitize(profile.name || 'Sanctum')}</h1>
+        <p class="greeting">${greeting}</p>
+      </div>
+
+      <div class="cosmic-grid">
+        <div class="cosmic-item">
+          <span class="cosmic-symbol">${astro.moonPhase.symbol}</span>
+          <div class="cosmic-label">Moon Phase</div>
+          <div class="cosmic-value">${astro.moonPhase.name}</div>
+        </div>
+        <div class="cosmic-item">
+          <span class="cosmic-symbol">${astro.moonSign.symbol}</span>
+          <div class="cosmic-label">Moon in</div>
+          <div class="cosmic-value">${astro.moonSign.name}</div>
+        </div>
+        <div class="cosmic-item">
+          <span class="cosmic-symbol">${astro.dayRuler.symbol}</span>
+          <div class="cosmic-label">Day of</div>
+          <div class="cosmic-value">${astro.dayRuler.name}</div>
+        </div>
+        <div class="cosmic-item">
+          <span class="cosmic-symbol">${astro.planetaryHour.symbol}</span>
+          <div class="cosmic-label">Planetary Hour</div>
+          <div class="cosmic-value">${astro.planetaryHour.name}</div>
+          <div class="cosmic-sub">~6am/6pm basis</div>
+        </div>
+      </div>
+
+      ${gradeLine}
+
+      <p class="section-title">Recent Entries</p>
+      <div class="entries-grid">${entriesHtml}</div>
+
+      <div class="quick-record">
+        <button class="btn-primary" data-nav="new-entry">✦ Record a Working</button>
+      </div>
+    `;
+  },
+
+  entryCard(e) {
+    const m = TYPE_META[e.type] || TYPE_META.ritual;
+    return `
+      <div class="entry-card type-${e.type}" data-entry-id="${e.id}" style="--type-color:${m.color}">
+        <div class="entry-type-badge">${m.icon} ${m.label}</div>
+        <h3>${sanitize(e.title || 'Untitled')}</h3>
+        <div class="entry-date">${formatShortDate(e.date)}</div>
+        ${e.content ? `<div class="entry-preview">${sanitize(e.content)}</div>` : ''}
+        <div class="entry-footer">
+          ${(e.tags || []).slice(0, 3).map(t => `<span class="tag">${sanitize(t)}</span>`).join('')}
+          ${e.moonPhaseSymbol ? `<span class="moon-mini" title="${sanitize(e.moonPhaseName || '')}">${e.moonPhaseSymbol}</span>` : ''}
+          ${e.rating ? `<span class="stars-display">${stars(e.rating)}</span>` : ''}
+        </div>
+      </div>
+    `;
+  },
+
+  // ──────────────────────────────────────────────────────────────
+  // NEW ENTRY VIEW
+  // ──────────────────────────────────────────────────────────────
+  viewNewEntry() {
+    const editing = this.editingEntry;
+    const type    = editing ? editing.type : (this.activeType || 'ritual');
+    const astro   = Astro.getAll(editing ? new Date(editing.date || Date.now()) : new Date());
+    const today   = new Date().toISOString().slice(0, 10);
+
+    const typeButtons = Object.entries(TYPE_META).map(([k, v]) =>
+      `<button type="button" class="type-btn ${k === type ? 'active type-' + k : ''}" data-type="${k}"
+        style="${k === type ? '--type-color:' + v.color : ''}">${v.icon} ${v.label}</button>`
+    ).join('');
+
+    const typeFields = this.renderTypeFields(type, editing);
+
+    return `
+      <div class="new-entry-header">
+        <h1>${editing ? 'Edit Entry' : 'New Entry'}</h1>
+        <p>${editing ? 'Refine your record' : 'Record a working, dream, study, or divination'}</p>
+      </div>
+
+      <div class="type-selector">${typeButtons}</div>
+
+      <form class="entry-form" id="entryForm">
+        <div>
+          <div class="card-title">Cosmic Conditions</div>
+          <div class="astro-bar">
+            <div class="astro-item">
+              <span class="sym">${astro.moonPhase.symbol}</span>
+              <span class="lbl">Moon:</span>
+              <span class="val">${astro.moonPhase.name} in ${astro.moonSign.name} ${astro.moonSign.symbol}</span>
+            </div>
+            <div class="astro-item">
+              <span class="sym">${astro.dayRuler.symbol}</span>
+              <span class="lbl">Day of ${astro.dayRuler.name}</span>
+            </div>
+            <div class="astro-item">
+              <span class="sym">${astro.planetaryHour.symbol}</span>
+              <span class="lbl">Hour of ${astro.planetaryHour.name}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-title">Title</label>
+            <input id="f-title" type="text" placeholder="Name this working…" value="${sanitize(editing?.title || '')}" required>
+          </div>
+          <div class="form-group">
+            <label for="f-date">Date</label>
+            <input id="f-date" type="date" value="${editing?.date || today}" required>
+          </div>
+        </div>
+
+        <hr class="divider">
+        <div class="type-fields" id="typeFields">${typeFields}</div>
+        <hr class="divider">
+
+        <div class="form-group">
+          <label for="f-content">Notes &amp; Observations</label>
+          <textarea id="f-content" placeholder="General notes, atmosphere, thoughts…">${sanitize(editing?.content || '')}</textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tags</label>
+            <div class="tags-display" id="tags-container"></div>
+          </div>
+          <div class="form-group">
+            <label>Overall Difficulty</label>
+            <div class="star-rating" id="rating-difficulty"></div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" data-nav="records">Cancel</button>
+          <button type="submit" class="btn-primary">${editing ? '✦ Save Changes' : '✦ Record Entry'}</button>
+        </div>
+      </form>
+    `;
+  },
+
+  renderTypeFields(type, data) {
+    const v = (key, fallback = '') => sanitize(data?.[key] ?? fallback);
+    const n = (key, fallback = 0) => data?.[key] ?? fallback;
+
+    switch (type) {
+      case 'ritual': return `
+        <div class="form-row">
+          <div class="form-group">
+            <label for="tf-ritualName">Ritual / Working Name</label>
+            <input id="tf-ritualName" type="text" placeholder="e.g. LBRP, Liber Resh…" value="${v('ritualName')}">
+          </div>
+          <div class="form-group">
+            <label for="tf-tools">Tools &amp; Instruments</label>
+            <input id="tf-tools" type="text" placeholder="Wand, cup, pantacle…" value="${v('tools')}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="tf-intention">Intention / Will</label>
+          <textarea id="tf-intention" placeholder="What was the stated intention of this working?">${v('intention')}</textarea>
+        </div>
+        <div class="form-group">
+          <label for="tf-result">Result &amp; Observations</label>
+          <textarea id="tf-result" placeholder="What occurred? Signs, visions, impressions…">${v('result')}</textarea>
+        </div>
+        <div class="form-group">
+          <label>Success Rating</label>
+          <div class="star-rating" id="rating-success"></div>
+        </div>
+      `;
+
+      case 'dream': return `
+        <div class="form-group">
+          <label for="tf-dreamContent">Dream Narrative</label>
+          <textarea id="tf-dreamContent" placeholder="Describe the dream in detail…">${v('dreamContent')}</textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="tf-symbols">Symbols &amp; Archetypes</label>
+            <input id="tf-symbols" type="text" placeholder="Key symbols encountered…" value="${v('symbols')}">
+          </div>
+          <div class="form-group">
+            <label for="tf-emotionalTone">Emotional Tone</label>
+            <input id="tf-emotionalTone" type="text" placeholder="e.g. fearful, ecstatic, serene…" value="${v('emotionalTone')}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Lucidity Level</label>
+          <div class="star-rating" id="rating-lucidity"></div>
+        </div>
+      `;
+
+      case 'study': return `
+        <div class="form-row">
+          <div class="form-group">
+            <label for="tf-textTitle">Text / Work</label>
+            <input id="tf-textTitle" type="text" placeholder="e.g. Liber ABA, The Book of the Law…" value="${v('textTitle')}">
+          </div>
+          <div class="form-group">
+            <label for="tf-textAuthor">Author</label>
+            <input id="tf-textAuthor" type="text" placeholder="e.g. Crowley, Regardie…" value="${v('textAuthor')}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="tf-pagesCovered">Pages / Chapters Covered</label>
+          <input id="tf-pagesCovered" type="text" placeholder="e.g. Chapter 3, pp. 45–78" value="${v('pagesCovered')}">
+        </div>
+        <div class="form-group">
+          <label for="tf-insights">Key Insights &amp; Reflections</label>
+          <textarea id="tf-insights" placeholder="What did you learn? What resonated?">${v('insights')}</textarea>
+        </div>
+      `;
+
+      case 'divination': return `
+        <div class="form-row">
+          <div class="form-group">
+            <label for="tf-method">Method</label>
+            <select id="tf-method">
+              ${['Tarot', 'I Ching', 'Geomancy', 'Scrying', 'Runes', 'Astrology', 'Numerology', 'Other']
+                .map(m => `<option ${v('method') === m ? 'selected' : ''}>${m}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="tf-spread">Spread / Layout</label>
+            <input id="tf-spread" type="text" placeholder="e.g. Celtic Cross, Single card…" value="${v('spread')}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="tf-question">Question Posed</label>
+          <input id="tf-question" type="text" placeholder="What question did you bring to the oracle?" value="${v('question')}">
+        </div>
+        <div class="form-group">
+          <label for="tf-readingDetails">Reading Details</label>
+          <textarea id="tf-readingDetails" placeholder="Cards drawn, figures cast, symbols seen…">${v('readingDetails')}</textarea>
+        </div>
+        <div class="form-group">
+          <label for="tf-interpretation">Interpretation</label>
+          <textarea id="tf-interpretation" placeholder="Your interpretation of the reading…">${v('interpretation')}</textarea>
+        </div>
+        <div class="form-group">
+          <label>Resonance / Accuracy</label>
+          <div class="star-rating" id="rating-resonance"></div>
+        </div>
+      `;
+    }
+  },
+
+  // ──────────────────────────────────────────────────────────────
+  // RECORDS VIEW
+  // ──────────────────────────────────────────────────────────────
+  viewRecords() {
+    const entries = DB.getEntries();
+    const filter  = this._recordsFilter || 'all';
+    const search  = this._recordsSearch || '';
+
+    const filtered = entries.filter(e => {
+      const matchType   = filter === 'all' || e.type === filter;
+      const matchSearch = !search || (e.title || '').toLowerCase().includes(search.toLowerCase())
+        || (e.content || '').toLowerCase().includes(search.toLowerCase())
+        || (e.tags || []).some(t => t.toLowerCase().includes(search.toLowerCase()));
+      return matchType && matchSearch;
+    });
+
+    const types = ['all', 'ritual', 'dream', 'study', 'divination'];
+    const filterTabs = types.map(t =>
+      `<button class="filter-tab ${filter === t ? 'active' : ''}" data-filter="${t}">
+        ${t === 'all' ? 'All' : TYPE_META[t].icon + ' ' + TYPE_META[t].label}
+      </button>`
+    ).join('');
+
+    const rows = filtered.length
+      ? filtered.map(e => {
+          const m = TYPE_META[e.type] || TYPE_META.ritual;
+          const subtitle = e.type === 'ritual'     ? e.ritualName
+                         : e.type === 'study'      ? (e.textTitle ? `${e.textTitle}${e.textAuthor ? ' — ' + e.textAuthor : ''}` : '')
+                         : e.type === 'divination' ? (e.method ? `${e.method}${e.question ? ': ' + e.question : ''}` : '')
+                         : e.emotionalTone || '';
+          return `
+            <div class="record-row type-${e.type}" data-entry-id="${e.id}" style="--type-color:${m.color}">
+              <div class="record-icon">${m.icon}</div>
+              <div class="record-main">
+                <h3>${sanitize(e.title || 'Untitled')}</h3>
+                ${subtitle ? `<div class="record-meta">${sanitize(subtitle)}</div>` : ''}
+                ${(e.tags || []).length ? `<div class="record-meta">${e.tags.slice(0,4).map(t => `<span class="tag">${sanitize(t)}</span>`).join(' ')}</div>` : ''}
+              </div>
+              <div class="record-aside">
+                <div class="record-date">${formatShortDate(e.date)}</div>
+                ${e.moonPhaseSymbol ? `<div class="record-moon">${e.moonPhaseSymbol} ${sanitize(e.moonSignName || '')}</div>` : ''}
+                ${e.rating ? `<div class="stars-display" style="font-size:0.8rem">${stars(e.rating, 5)}</div>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('')
+      : `<div class="empty-state">
+          <div class="empty-icon">🔮</div>
+          <p>${search ? 'No entries match your search.' : 'No entries recorded yet.'}</p>
+        </div>`;
+
+    return `
+      <div class="records-header"><h1>Annals</h1></div>
+      <div class="filter-bar">
+        <div class="search-box">
+          <span class="search-icon">⌕</span>
+          <input type="text" id="searchInput" placeholder="Search entries…" value="${sanitize(search)}">
+        </div>
+        <div class="filter-tabs">${filterTabs}</div>
+        <button class="btn-primary" data-nav="new-entry">+ New</button>
+      </div>
+      <div class="records-list">${rows}</div>
+    `;
+  },
+
+  // ──────────────────────────────────────────────────────────────
+  // ENTRY DETAIL VIEW
+  // ──────────────────────────────────────────────────────────────
+  viewDetail(id) {
+    const entry = DB.getEntries().find(e => e.id === id);
+    if (!entry) return `<div class="empty-state"><p>Entry not found.</p></div>`;
+
+    const m = TYPE_META[entry.type] || TYPE_META.ritual;
+    const typeSpecific = this.renderDetailTypeFields(entry);
+
+    const astroHtml = (entry.moonPhaseName || entry.dayRulerName) ? `
+      <div class="detail-astro">
+        ${entry.moonPhaseSymbol ? `<div class="detail-astro-item"><span class="sym">${entry.moonPhaseSymbol}</span><span>${sanitize(entry.moonPhaseName || '')} ${entry.moonSignSymbol || ''} ${sanitize(entry.moonSignName || '')}</span></div>` : ''}
+        ${entry.dayRulerSymbol ? `<div class="detail-astro-item"><span class="sym">${entry.dayRulerSymbol}</span><span>Day of ${sanitize(entry.dayRulerName || '')}</span></div>` : ''}
+        ${entry.planetaryHourSymbol ? `<div class="detail-astro-item"><span class="sym">${entry.planetaryHourSymbol}</span><span>Hour of ${sanitize(entry.planetaryHourName || '')}</span></div>` : ''}
+      </div>
+    ` : '';
+
+    return `
+      <div class="detail-header">
+        <button class="detail-back" data-nav="records">← Back to Annals</button>
+        <div class="detail-type">
+          <span class="detail-type-badge type-${entry.type}" style="--type-color:${m.color}">${m.icon} ${m.label}</span>
+        </div>
+        <h1>${sanitize(entry.title || 'Untitled')}</h1>
+        <div class="detail-date">${formatDate(entry.date)}</div>
+      </div>
+
+      ${astroHtml}
+
+      <div class="detail-body">
+        ${typeSpecific}
+        ${entry.content ? `<div class="detail-section"><h3>Notes &amp; Observations</h3><div class="detail-content">${sanitize(entry.content)}</div></div>` : ''}
+        ${entry.rating ? `<div class="detail-section"><h3>Difficulty</h3><div class="detail-rating">${stars(entry.rating)}</div></div>` : ''}
+        ${(entry.tags || []).length ? `<div class="detail-section"><h3>Tags</h3><div class="detail-tags">${entry.tags.map(t => `<span class="tag">${sanitize(t)}</span>`).join('')}</div></div>` : ''}
+      </div>
+
+      <div class="detail-actions">
+        <button class="btn-secondary" id="editEntry" data-id="${entry.id}">Edit</button>
+        <button class="btn-danger" id="deleteEntry" data-id="${entry.id}">Delete</button>
+      </div>
+    `;
+  },
+
+  renderDetailTypeFields(e) {
+    switch (e.type) {
+      case 'ritual': return `
+        ${e.ritualName ? `<div class="detail-section"><h3>Ritual Name</h3><p>${sanitize(e.ritualName)}</p></div>` : ''}
+        ${e.tools ? `<div class="detail-section"><h3>Tools &amp; Instruments</h3><p>${sanitize(e.tools)}</p></div>` : ''}
+        ${e.intention ? `<div class="detail-section"><h3>Intention / Will</h3><div class="detail-content">${sanitize(e.intention)}</div></div>` : ''}
+        ${e.result ? `<div class="detail-section"><h3>Result &amp; Observations</h3><div class="detail-content">${sanitize(e.result)}</div></div>` : ''}
+        ${e.successRating ? `<div class="detail-section"><h3>Success Rating</h3><div class="detail-rating">${stars(e.successRating)}</div></div>` : ''}
+      `;
+      case 'dream': return `
+        ${e.dreamContent ? `<div class="detail-section"><h3>Dream Narrative</h3><div class="detail-content">${sanitize(e.dreamContent)}</div></div>` : ''}
+        ${e.symbols ? `<div class="detail-section"><h3>Symbols &amp; Archetypes</h3><p>${sanitize(e.symbols)}</p></div>` : ''}
+        ${e.emotionalTone ? `<div class="detail-section"><h3>Emotional Tone</h3><p>${sanitize(e.emotionalTone)}</p></div>` : ''}
+        ${e.lucidity ? `<div class="detail-section"><h3>Lucidity</h3><div class="detail-rating">${stars(e.lucidity)}</div></div>` : ''}
+      `;
+      case 'study': return `
+        ${e.textTitle ? `<div class="detail-section"><h3>Text</h3><p>${sanitize(e.textTitle)}${e.textAuthor ? ' — <em>' + sanitize(e.textAuthor) + '</em>' : ''}</p></div>` : ''}
+        ${e.pagesCovered ? `<div class="detail-section"><h3>Pages / Chapters</h3><p>${sanitize(e.pagesCovered)}</p></div>` : ''}
+        ${e.insights ? `<div class="detail-section"><h3>Key Insights</h3><div class="detail-content">${sanitize(e.insights)}</div></div>` : ''}
+      `;
+      case 'divination': return `
+        <div class="detail-section"><h3>Method</h3><p>${sanitize(e.method || '')}${e.spread ? ' — ' + sanitize(e.spread) : ''}</p></div>
+        ${e.question ? `<div class="detail-section"><h3>Question Posed</h3><p><em>${sanitize(e.question)}</em></p></div>` : ''}
+        ${e.readingDetails ? `<div class="detail-section"><h3>Reading Details</h3><div class="detail-content">${sanitize(e.readingDetails)}</div></div>` : ''}
+        ${e.interpretation ? `<div class="detail-section"><h3>Interpretation</h3><div class="detail-content">${sanitize(e.interpretation)}</div></div>` : ''}
+        ${e.resonanceRating ? `<div class="detail-section"><h3>Resonance</h3><div class="detail-rating">${stars(e.resonanceRating)}</div></div>` : ''}
+      `;
+      default: return '';
+    }
+  },
+
+  // ──────────────────────────────────────────────────────────────
+  // PROFILE VIEW
+  // ──────────────────────────────────────────────────────────────
+  viewProfile() {
+    const p = DB.getProfile();
+    const entries = DB.getEntries();
+    const counts = { ritual: 0, dream: 0, study: 0, divination: 0 };
+    entries.forEach(e => { if (counts[e.type] !== undefined) counts[e.type]++; });
+
+    const gradeList = p.order === 'aa' ? AA_GRADES : p.order === 'golden_dawn' ? GD_GRADES : [];
+    const gradeOptions = gradeList.map(g =>
+      `<option ${p.grade === g ? 'selected' : ''}>${g}</option>`
+    ).join('');
+
+    const gradeName = (p.grade || '').replace(/.*?\s/, '');
+    const sigil = GRADE_SIGILS[gradeName] || '✦';
+
+    return `
+      <div class="profile-header">
+        <h1>Adept Profile</h1>
+        <p>Configure your path and track your progress</p>
+      </div>
+
+      ${p.grade ? `<div class="grade-display">
+        <div class="grade-sigil">${sigil}</div>
+        <div class="grade-name">${sanitize(p.grade)}</div>
+        <div class="grade-order">${p.order === 'aa' ? 'A∴A∴' : p.order === 'golden_dawn' ? 'Golden Dawn' : sanitize(p.order || '')}</div>
+      </div>` : ''}
+
+      <form class="profile-form" id="profileForm">
+        <div class="form-group">
+          <label for="pf-name">Magical Name / Motto</label>
+          <input id="pf-name" type="text" placeholder="e.g. Perdurabo, Sub Spe…" value="${sanitize(p.name || '')}">
+        </div>
+        <div class="form-group">
+          <label for="pf-order">Order / Tradition</label>
+          <select id="pf-order">
+            <option value="">— None / Other —</option>
+            <option value="aa" ${p.order === 'aa' ? 'selected' : ''}>A∴A∴ (Thelema)</option>
+            <option value="golden_dawn" ${p.order === 'golden_dawn' ? 'selected' : ''}>Hermetic Order of the Golden Dawn</option>
+            <option value="custom" ${p.order === 'custom' ? 'selected' : ''}>Custom / Independent</option>
+          </select>
+        </div>
+        <div class="form-group" id="gradeGroup" ${!gradeList.length ? 'style="display:none"' : ''}>
+          <label for="pf-grade">Grade</label>
+          <select id="pf-grade">${gradeOptions}</select>
+        </div>
+        <div class="form-group" id="customGradeGroup" ${p.order !== 'custom' ? 'style="display:none"' : ''}>
+          <label for="pf-customGrade">Custom Grade / Title</label>
+          <input id="pf-customGrade" type="text" placeholder="Your grade or title…" value="${sanitize(p.customGrade || '')}">
+        </div>
+        <div class="form-group">
+          <label for="pf-notes">Personal Notes</label>
+          <textarea id="pf-notes" placeholder="Notes on your path, goals, vows…">${sanitize(p.notes || '')}</textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">✦ Save Profile</button>
+        </div>
+      </form>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-number">${entries.length}</div><div class="stat-label">Total Entries</div></div>
+        <div class="stat-card"><div class="stat-number">${counts.ritual}</div><div class="stat-label">Rituals</div></div>
+        <div class="stat-card"><div class="stat-number">${counts.dream}</div><div class="stat-label">Dreams</div></div>
+        <div class="stat-card"><div class="stat-number">${counts.study}</div><div class="stat-label">Study Sessions</div></div>
+        <div class="stat-card"><div class="stat-number">${counts.divination}</div><div class="stat-label">Divinations</div></div>
+      </div>
+    `;
+  },
+
+  // ──────────────────────────────────────────────────────────────
+  // EVENT BINDING
+  // ──────────────────────────────────────────────────────────────
+  bindEvents() {
+    const app = document.getElementById('app');
+
+    app.querySelectorAll('[data-nav]').forEach(btn =>
+      btn.addEventListener('click', () => this.navigate(btn.dataset.nav))
+    );
+
+    app.querySelectorAll('[data-entry-id]').forEach(card =>
+      card.addEventListener('click', e => {
+        if (!e.target.closest('[data-nav]')) {
+          this.navigate('entry-detail', { id: card.dataset.entryId });
+        }
+      })
+    );
+
+    if (this.view === 'new-entry') {
+      app.querySelectorAll('.type-btn').forEach(btn =>
+        btn.addEventListener('click', () => {
+          this.activeType = btn.dataset.type;
+          this.render();
+        })
+      );
+
+      const editing = this.editingEntry;
+      const type = editing?.type || this.activeType;
+
+      this.tagInput = TagInput('tags-container', editing?.tags || []);
+      this.ratingWidgets.difficulty = StarRating('rating-difficulty', editing?.rating || 0);
+
+      if (type === 'ritual') {
+        this.ratingWidgets.success = StarRating('rating-success', editing?.successRating || 0);
+      } else if (type === 'dream') {
+        this.ratingWidgets.lucidity = StarRating('rating-lucidity', editing?.lucidity || 0);
+      } else if (type === 'divination') {
+        this.ratingWidgets.resonance = StarRating('rating-resonance', editing?.resonanceRating || 0);
+      }
+
+      const form = document.getElementById('entryForm');
+      if (form) {
+        form.addEventListener('submit', e => {
+          e.preventDefault();
+          this.handleEntrySubmit(type);
+        });
+      }
+    }
+
+    if (this.view === 'records') {
+      const search = document.getElementById('searchInput');
+      if (search) {
+        search.addEventListener('input', e => {
+          const cursor = e.target.selectionStart;
+          this._recordsSearch = e.target.value;
+          this.render();
+          const newInput = document.getElementById('searchInput');
+          if (newInput) { newInput.focus(); newInput.setSelectionRange(cursor, cursor); }
+        });
+      }
+      app.querySelectorAll('.filter-tab').forEach(tab =>
+        tab.addEventListener('click', () => {
+          this._recordsFilter = tab.dataset.filter;
+          this.render();
+        })
+      );
+    }
+
+    const editBtn = document.getElementById('editEntry');
+    if (editBtn) {
+      editBtn.addEventListener('click', () => {
+        const entry = DB.getEntries().find(e => e.id === editBtn.dataset.id);
+        if (entry) {
+          this.editingEntry = entry;
+          this.activeType = entry.type;
+          this.navigate('new-entry');
+        }
+      });
+    }
+
+    const deleteBtn = document.getElementById('deleteEntry');
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', () => {
+        this.showModal(
+          'Delete Entry',
+          'Are you sure you want to delete this entry? This cannot be undone.',
+          () => {
+            DB.deleteEntry(deleteBtn.dataset.id);
+            this.editingEntry = null;
+            showToast('Entry deleted.');
+            this.navigate('records');
+          }
+        );
+      });
+    }
+
+    const profileForm = document.getElementById('profileForm');
+    if (profileForm) {
+      const orderSel = document.getElementById('pf-order');
+      if (orderSel) {
+        orderSel.addEventListener('change', () => {
+          const order = orderSel.value;
+          const gradeList = order === 'aa' ? AA_GRADES : order === 'golden_dawn' ? GD_GRADES : [];
+          const gradeGroup = document.getElementById('gradeGroup');
+          const customGroup = document.getElementById('customGradeGroup');
+          const gradeSelect = document.getElementById('pf-grade');
+          if (gradeGroup) gradeGroup.style.display = gradeList.length ? '' : 'none';
+          if (customGroup) customGroup.style.display = order === 'custom' ? '' : 'none';
+          if (gradeSelect) gradeSelect.innerHTML = gradeList.map(g => `<option>${g}</option>`).join('');
+        });
+      }
+      profileForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const order = document.getElementById('pf-order')?.value || '';
+        const gradeList = order === 'aa' ? AA_GRADES : order === 'golden_dawn' ? GD_GRADES : [];
+        DB.saveProfile({
+          name:        document.getElementById('pf-name')?.value || '',
+          order,
+          grade:       gradeList.length ? (document.getElementById('pf-grade')?.value || '') : '',
+          customGrade: document.getElementById('pf-customGrade')?.value || '',
+          notes:       document.getElementById('pf-notes')?.value || '',
+        });
+        showToast('Profile saved. So mote it be.');
+        this.navigate('profile');
+      });
+    }
+  },
+
+  // ──────────────────────────────────────────────────────────────
+  // FORM SUBMISSION
+  // ──────────────────────────────────────────────────────────────
+  handleEntrySubmit(type) {
+    const date = document.getElementById('f-date')?.value || new Date().toISOString().slice(0, 10);
+    const astro = Astro.getAll(new Date(date + 'T12:00:00'));
+
+    const base = {
+      id:      this.editingEntry?.id,
+      type,
+      title:   document.getElementById('f-title')?.value?.trim() || 'Untitled',
+      date,
+      content: document.getElementById('f-content')?.value || '',
+      tags:    this.tagInput?.get() || [],
+      rating:  this.ratingWidgets.difficulty?.get() || 0,
+      moonPhaseSymbol:     astro.moonPhase.symbol,
+      moonPhaseName:       astro.moonPhase.name,
+      moonSignSymbol:      astro.moonSign.symbol,
+      moonSignName:        astro.moonSign.name,
+      dayRulerSymbol:      astro.dayRuler.symbol,
+      dayRulerName:        astro.dayRuler.name,
+      planetaryHourSymbol: astro.planetaryHour.symbol,
+      planetaryHourName:   astro.planetaryHour.name,
+    };
+
+    const typeData = {};
+    const g = id => document.getElementById(id)?.value || '';
+
+    if (type === 'ritual') {
+      Object.assign(typeData, {
+        ritualName:    g('tf-ritualName'),
+        tools:         g('tf-tools'),
+        intention:     g('tf-intention'),
+        result:        g('tf-result'),
+        successRating: this.ratingWidgets.success?.get() || 0,
+      });
+    } else if (type === 'dream') {
+      Object.assign(typeData, {
+        dreamContent:  g('tf-dreamContent'),
+        symbols:       g('tf-symbols'),
+        emotionalTone: g('tf-emotionalTone'),
+        lucidity:      this.ratingWidgets.lucidity?.get() || 0,
+      });
+    } else if (type === 'study') {
+      Object.assign(typeData, {
+        textTitle:    g('tf-textTitle'),
+        textAuthor:   g('tf-textAuthor'),
+        pagesCovered: g('tf-pagesCovered'),
+        insights:     g('tf-insights'),
+      });
+    } else if (type === 'divination') {
+      Object.assign(typeData, {
+        method:          g('tf-method'),
+        spread:          g('tf-spread'),
+        question:        g('tf-question'),
+        readingDetails:  g('tf-readingDetails'),
+        interpretation:  g('tf-interpretation'),
+        resonanceRating: this.ratingWidgets.resonance?.get() || 0,
+      });
+    }
+
+    DB.saveEntry({ ...base, ...typeData });
+    this.editingEntry = null;
+    showToast('Entry recorded. ✦');
+    this.navigate('records');
+  },
+
+  // ──────────────────────────────────────────────────────────────
+  // MODAL
+  // ──────────────────────────────────────────────────────────────
+  showModal(title, message, onConfirm) {
+    const overlay = document.getElementById('modal-overlay');
+    document.getElementById('modal-content').innerHTML = `
+      <h2>${sanitize(title)}</h2>
+      <p>${sanitize(message)}</p>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="modalCancel">Cancel</button>
+        <button class="btn-danger" id="modalConfirm">Confirm</button>
+      </div>
+    `;
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.getElementById('modalCancel').addEventListener('click', () => this.closeModal());
+    document.getElementById('modalConfirm').addEventListener('click', () => { onConfirm(); this.closeModal(); });
+    overlay.addEventListener('click', e => { if (e.target === overlay) this.closeModal(); }, { once: true });
+  },
+
+  closeModal() {
+    const overlay = document.getElementById('modal-overlay');
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+function createStars() {
+  const container = document.getElementById('stars');
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < 220; i++) {
+    const s = document.createElement('div');
+    const size = Math.random() * 2 + 0.5;
+    s.className = 'star';
+    s.style.cssText = [
+      `left:${(Math.random() * 100).toFixed(2)}%`,
+      `top:${(Math.random() * 100).toFixed(2)}%`,
+      `width:${size.toFixed(1)}px`,
+      `height:${size.toFixed(1)}px`,
+      `opacity:${(Math.random() * 0.6 + 0.1).toFixed(2)}`,
+      `animation-duration:${(Math.random() * 4 + 2).toFixed(1)}s`,
+      `animation-delay:${(Math.random() * 4).toFixed(1)}s`,
+    ].join(';');
+    frag.appendChild(s);
+  }
+  container.appendChild(frag);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  createStars();
+
+  document.querySelectorAll('.nav-btn').forEach(btn =>
+    btn.addEventListener('click', () => {
+      App.editingEntry = null;
+      App.navigate(btn.dataset.view);
+      document.querySelector('.main-nav').classList.remove('open');
+    })
+  );
+
+  document.getElementById('navToggle').addEventListener('click', () => {
+    document.querySelector('.main-nav').classList.toggle('open');
+  });
+
+  App.navigate('dashboard');
+});
+  </script>
 </body>
 </html>
